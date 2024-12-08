@@ -2,10 +2,10 @@
 
 import { FormEvent, useState } from "react";
 
-import { useSignUp } from "@clerk/nextjs";
-
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
+import { useSignUp } from "@clerk/nextjs";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
