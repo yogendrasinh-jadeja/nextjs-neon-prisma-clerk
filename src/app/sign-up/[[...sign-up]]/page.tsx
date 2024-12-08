@@ -1,10 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+
 import { useSignUp } from "@clerk/nextjs";
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +18,10 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { Eye, EyeOff } from "lucide-react";
 
-export default function SignUp() {
+const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
@@ -28,24 +31,17 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  if (!isLoaded) {
-    return null;
-  }
+  if (!isLoaded) return null;
 
-  async function submit(e: React.FormEvent) {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!isLoaded) {
-      return;
-    }
-
+    if (!isLoaded) return
     try {
       await signUp.create({
         emailAddress,
         password,
       });
-
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
       setPendingVerification(true);
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
@@ -53,12 +49,9 @@ export default function SignUp() {
     }
   }
 
-  async function onPressVerify(e: React.FormEvent) {
+  const handleUserVerification = async (e: FormEvent) => {
     e.preventDefault();
-    if (!isLoaded) {
-      return;
-    }
-
+    if (!isLoaded) return
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
@@ -66,14 +59,11 @@ export default function SignUp() {
       if (completeSignUp.status !== "complete") {
         console.log(JSON.stringify(completeSignUp, null, 2));
       }
-
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
         router.push("/dashboard");
       }
     } catch (err: any) {
-        console.log(err,"err+++++++++++");
-        
       console.error(JSON.stringify(err, null, 2));
       setError(err.errors[0].message);
     }
@@ -89,7 +79,7 @@ export default function SignUp() {
         </CardHeader>
         <CardContent>
           {!pendingVerification ? (
-            <form onSubmit={submit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -133,7 +123,7 @@ export default function SignUp() {
               </Button>
             </form>
           ) : (
-            <form onSubmit={onPressVerify} className="space-y-4">
+            <form onSubmit={handleUserVerification} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="code">Verification Code</Label>
                 <Input
@@ -169,4 +159,7 @@ export default function SignUp() {
       </Card>
     </div>
   );
+
 }
+
+export default SignUp
