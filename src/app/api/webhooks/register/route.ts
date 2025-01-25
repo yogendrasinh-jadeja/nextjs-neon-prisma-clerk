@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
 
     const headerPayload = await headers()
 
-    const svixId = headerPayload.get("svix-id")
-    const svixTimestamp = headerPayload.get("svix-timestamp")
-    const svixSignature = headerPayload.get("svix-signature")
+    const svixId = req.headers.get("svix-id");
+    const svixTimestamp = req.headers.get("svix-timestamp");
+    const svixSignature = req.headers.get("svix-signature");
 
     if (!svixId || !svixTimestamp || !svixSignature) {
         return NextResponse.json(
