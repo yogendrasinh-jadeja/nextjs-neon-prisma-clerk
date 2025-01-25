@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
 
     if (!svixId || !svixTimestamp || !svixSignature) {
         return NextResponse.json(
-            { error: "Missing required Svix headers." },
+            { error: "Missing required Svix headers.", Data:{
+                svixId,svixTimestamp,svixSignature
+            } },
             { status: 400 }
         );
     }
