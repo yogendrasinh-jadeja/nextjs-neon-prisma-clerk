@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
     const svixTimestamp = headerPayload.get("svix-timestamp");
     const svixSignature = headerPayload.get("svix-signature");
 
-
     if (!svixId || !svixTimestamp || !svixSignature) {
         return NextResponse.json(
             { error: "Missing required Svix headers." },
