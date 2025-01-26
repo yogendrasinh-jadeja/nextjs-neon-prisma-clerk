@@ -30,10 +30,39 @@ export async function POST() {
 
     } catch (error) {
         return NextResponse.json({ error: "Internal server error", }, { status: 500 })
-
     }
 }
 
 export async function GET() {
+    const { userId } = await auth()
+    if (!userId) {
+        return NextResponse.json({ error: "unauthorized", }, { status: 401 })
+    }
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId }, select: {
+                isSubscribed: true,
+                subscriptionsEnd: true
+            }
+        })
+        if (!user) {
+            return NextResponse.json({ error: "user not found", }, { status: 401 })
+        }
+        const now = new Date()
+        if (user.subscriptionsEnd && user.subscriptionsEnd < now) {
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    isSubscribed: false,
+                    subscriptionsEnd: null
+                }
+            })
+            return NextResponse.json({ isSubscribed: false, subscriptionsEnd: null }, { status: 400 })
+        }
+        return NextResponse.json({ isSubscribed: user.isSubscribed, subscriptionsEnd: user.subscriptionsEnd }, { status: 400 })
 
+
+    } catch (error) {
+        return NextResponse.json({ error: "Internal server error", }, { status: 500 })
+    }
 }
