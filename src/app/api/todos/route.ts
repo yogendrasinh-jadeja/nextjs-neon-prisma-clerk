@@ -48,6 +48,34 @@ export async function GET(req: NextRequest) {
     }
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+    const { userId } = await auth()
+    if (!userId) {
+        return NextResponse.json({ error: "unauthorized", }, { status: 401 })
+    }
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+        include: {
+            todos: true
+        }
+    })
+    if (!user) {
+        return NextResponse.json({ error: "user not found", }, { status: 404 })
+    }
 
+    if (!user.isSubscribed && user.todos.length >= 3) {
+        return NextResponse.json({ error: "Free users can only create upto 3 todos. please subcribe to our paid plan to write awesome todos", }, { status: 403 })
+
+    }
+    const { title } = await req.json()
+
+    const todo = await prisma.todo.create({
+        data: {
+            title,
+            userId
+        }
+    })
+    return NextResponse.json({ todo }, { status: 201 })
 }
