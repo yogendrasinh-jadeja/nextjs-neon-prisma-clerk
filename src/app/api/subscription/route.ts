@@ -60,8 +60,6 @@ export async function GET() {
             return NextResponse.json({ isSubscribed: false, subscriptionsEnd: null }, { status: 400 })
         }
         return NextResponse.json({ isSubscribed: user.isSubscribed, subscriptionsEnd: user.subscriptionsEnd }, { status: 400 })
-
-
     } catch (error) {
         return NextResponse.json({ error: "Internal server error", }, { status: 500 })
     }
