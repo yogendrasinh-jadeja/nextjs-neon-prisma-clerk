@@ -1,6 +1,6 @@
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/useToast";
 import { useCallback, useEffect, useState } from "react";
 import { TodoItem } from "@/components/TodoItem";
 import { TodoForm } from "@/components/TodoForm";
